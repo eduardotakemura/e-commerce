@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="container mt-5 text-center">
+    <h1>Select your Payment</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="paypal-button-container"></div>
+<p id="result-message"></p>
+{% endblock %}
+
+{% block page_script %}
+<script
+      src="https://www.paypal.com/sdk/js?client-id=AS20CDrcnicSoyVewmFccPhUJdWhBa_VuQgRvJUhGcUy6oI5MW5WjDjHR365ekH_DUSNLRhPOoXxB5-R&currency=USD&components=buttons&enable-funding=venmo"
+      data-sdk-integration-source="developer-studio"
+    ></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

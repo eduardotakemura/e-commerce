@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="container mt-5 text-center">
+    <h1>Order Details</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Order Details Page -->
+<div class="container mt-4">
+    <!-- General Info -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Order Details</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="order-id" class="form-label">Order ID</label>
+                    <input type="text" class="form-control" id="order-id" value="{{ order['id'] }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="order-date" class="form-label">Order Date</label>
+                    <input type="text" class="form-control" id="order-date" value="{{ order['order_date'] }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="total-value" class="form-label">Total Value</label>
+                    <input type="text" class="form-control text-primary" id="total-value" value="${{ order['total_value'] | round(2) }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="address" value="{{ order['address'] }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="status" class="form-label">Status</label>
+                    <input type="text" class="form-control" id="status" value="{{ order['status'] }}" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Items Description -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Items Description</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Flavour</th>
+                        <th>Unit Value</th>
+                        <th>Quantity</th>
+                        <th>Total Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Orders items -->
+                    {% for item in order_items: %}
+                    <tr>
+                        <td>{{ item['pos'] }}</td>
+                        <td><a href="{{  url_for('product',id=item.product_id) }}">{{ item['name'] }}</a></td>
+                        <td>{{ item['flavour'] }}</td>
+                        <td>${{ item['unit_value'] | round(2) }}</td>
+                        <td>{{ item['quantity'] }}</td>
+                        <td>${{ item['value_item'] | round(2) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="{{ url_for('all_orders') if current_user['role'] == 'admin' else url_for('orders',id=current_user['id']) }}" type="button" class="mt-2 btn btn-primary btn-block">Back to Orders</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,311 @@
+.card-img-top-custom {
+    width: 80%;
+    margin: 0 auto; /* Center the image horizontally */
+}
+
+.discount-tag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    border-radius: 0 0 0 10px;
+}
+.card-link {
+        color: inherit;
+        text-decoration: none;
+}
+.scrolling-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .scrolling-wrapper .brand {
+    display: inline-block;
+    margin-right: 15px;
+  }
+  .scrolling-wrapper img {
+    max-height: 100px;
+    max-width: 100px;
+  }
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  .scrolling {
+    display: inline-block;
+    animation: scroll 30s linear infinite;
+  }
+  .carousel-item img {
+        object-fit: cover;
+        height: 400px; /* Adjust as needed */
+   }
+   .product-tags {
+    display: flex;
+    gap: 0.5rem; /* Space between tags */
+    flex-wrap: wrap; /* Wrap tags to the next line if necessary */
+    margin-bottom: 1rem; /* Space below the tags */
+}
+
+.tag-discount {
+    border: 2px solid blue; /* Border color and thickness */
+    border-radius: 4px; /* Rounded corners */
+    padding: 0.5rem 1rem; /* Padding inside the tag */
+    background-color: #f8f9fa; /* Background color */
+    color: blue; /* Text color */
+    font-size: 0.9rem; /* Font size */
+    display: inline-block; /* Ensure the tag only takes up as much space as it needs */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-align: center; /* Center text inside the tag */
+}
+.tag-top-sale {
+    border: 2px solid red; /* Border color and thickness */
+    border-radius: 4px; /* Rounded corners */
+    padding: 0.5rem 1rem; /* Padding inside the tag */
+    background-color: #f8f9fa; /* Background color */
+    color: red; /* Text color */
+    font-size: 0.9rem; /* Font size */
+    display: inline-block; /* Ensure the tag only takes up as much space as it needs */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-align: center; /* Center text inside the tag */
+}
+.tag-most-sold {
+    border-radius: 4px; /* Rounded corners */
+    padding: 0.5rem 1rem; /* Padding inside the tag */
+    background-color: orange; /* Background color */
+    color: black; /* Text color */
+    font-size: 0.9rem; /* Font size */
+    display: inline-block; /* Ensure the tag only takes up as much space as it needs */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-align: center; /* Center text inside the tag */
+}
+
+.btn-flavor {
+    flex: 1;
+}
+.btn-flavor.active {
+    background-color: #0d6efd;
+    color: white;
+}
+ .estimate-shipping {
+    margin-top: 20px;
+}
+.zip-code-input {
+    max-width: 250px;
+}
+.btn-calculate {
+    margin-left: 10px;
+    margin-right: 20px;
+}
+.carousel-container {
+    max-width: 600px;
+    margin: auto;
+}
+.main-image {
+    width: 70%;
+    height: auto;
+}
+.thumbnail {
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 5px;
+}
+.thumbnail.active {
+    border: 2px solid #0d6efd;
+}
+.content-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 2rem; /* Increase font size */
+    border-bottom: 1px solid #ccc; /* Add a bottom border */
+    padding-bottom: 10px; /* Add some padding at the bottom */
+    margin-top: 30px; /* Add some margin at the top */
+}
+.content-buttons .btn {
+    flex-grow: 1;
+    margin-right: 10px;
+    border: none; /* Remove button border */
+    transition: background-color 0.3s;
+}
+.content-buttons .btn:last-child {
+    margin-right: 0;
+}
+.content-buttons .btn.active {
+    background-color: #0d6efd;
+    color: white;
+}
+.content-buttons .btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+.content-section {
+    display: none;
+}
+.content-section.active {
+    display: block;
+}
+.review-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.review-card h5 {
+    margin-bottom: 10px;
+}
+.review-card p {
+    margin: 5px 0;
+}
+.review-card .rating {
+    display: flex;
+    align-items: center;
+}
+.review-card .rating span {
+    color: gold;
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+.review-card .rating p {
+    margin: 0 5px 0 0;
+}
+.review-card .comment {
+    font-style: italic;
+}
+.section-header {
+    text-align: left;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-top: 30px;
+}
+ .related-products {
+    display: flex;
+    overflow-x: auto;
+    padding: 15px 0;
+}
+.related-products .card {
+    min-width: 200px;
+    margin-right: 15px;
+}
+
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 100%;
+    background: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1050;
+}
+.cart-sidebar.active {
+    transform: translateX(0);
+}
+.cart-header {
+    background: #343a40;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cart-body {
+    padding: 1rem;
+    overflow-y: auto;
+    height: calc(100% - 160px);
+}
+.cart-footer {
+    background: #f8f9fa;
+    padding: 1rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1040;
+}
+.cart-overlay.active {
+    display: block;
+}
+.cart-item {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.cart-item img {
+    width: 150px;
+    height: auto;
+    object-fit: cover;
+    margin-right: 0.5rem;
+}
+.cart-item .item-details {
+    flex: 1;
+}
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em;
+    margin-top: 10px;
+}
+.remove-icon {
+    cursor: pointer;
+}
+.remove-icon:hover {
+    opacity: 0.7; /* Slightly dim the icon on hover */
+}
+.cart-icon:hover {
+    color: #007BFF;
+}
+.log-icon:hover {
+    color: #007BFF;
+}
+.form-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+
+.product-header, .product-row {
+    border-bottom: 1px solid #ddd;
+}
+.shipping-option.selected {
+    background-color: #e9ecef;
+}
+.order-summary-table .total-row {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.zip-code-input {
+    width: 40%;
+}
+.product-image {
+    width: 80px;
+    height: auto;
+    float: left;
+    margin-right: 10px;
+}
+.btn-quantity {
+    color: gray;
+}
+
+#paypal-button-container {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}

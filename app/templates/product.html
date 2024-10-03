@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container px-4 py-3 mt-3">
+    <!-- Product Details -->
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-md-6">
+            <div class="carousel-container d-flex flex-column align-items-center">
+                <!-- Main Image -->
+                <img id="mainImage" src="{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/head.png') }}" class="main-image" alt="Main Product Image">
+
+                <!-- Thumbnails -->
+                <div class="d-flex mt-2 justify-content-center">
+                    {% for image in product['images']: %}
+                    <img src="{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/' ~ image) }}" class="thumbnail" alt="Thumbnail 2" onclick="changeImage('{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/' ~ image) }}')">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h2 class="mb-4">{{ product.name }} ({{ product.weight }}g)</h2>
+            <!-- Tags -->
+            <div class="product-tags">
+                {% if product.discount > 0 %}
+                <div class="tag-discount">-{{ product.discount }}% OFF</div>
+                {% endif %}
+                {% if product.top_sale %}
+                <div class="tag-top-sale">Top Sales</div>
+                {% endif %}
+                {% if product.most_sold %}
+                <div class="tag-most-sold">Most Sold</div>
+                {% endif %}
+            </div>
+            <p class="text-muted text-decoration-line-through">From: ${{ product.base_value | round(2) }}</p>
+            <p class="fw-bold fs-4">To: ${{ product.current_value | round(2) }}</p>
+
+            <form class="d-flex flex-column" id="add-to-cart-form">
+                <!-- Flavor Selection Row -->
+                <label class="form-label">Choose flavor:</label>
+                <div class="d-flex flex-wrap mb-3" id="flavor-selection">
+                    {% for flavour in product['flavours']: %}
+                    <button type="button" class="btn btn-outline-primary btn-flavor me-2 mb-2">{{ flavour }}</button>
+                    {% endfor %}
+                </div>
+
+                <!-- Quantity Input -->
+                <label for="quantity" class="form-label">Quantity</label>
+                <div class="d-flex">
+                    <input type="number" id="quantity" class="form-control me-2" value="1" min="1" style="width: 80px;">
+                    <button type="submit" id="add-to-cart-button" class="btn btn-primary" style="width: 120px;">Add to Cart</button>
+                </div>
+            </form>
+
+            <!-- Estimate Shipping -->
+            <div class="estimate-shipping mt-4">
+                <label for="zip-code" class="form-label">Estimate Shipping:</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="zip-code" class="form-control zip-code-input" placeholder="Enter zip code">
+                    <button type="button" class="btn btn-secondary btn-calculate">Calculate</button>
+                    <p class="mt-2 mb-0 text-decoration-underline">Get zip-code</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Content Buttons -->
+    <div class="content-buttons mt-5">
+        <button type="button" class="btn btn-outline-primary active fs-4" data-content="description">Description</button>
+        <button type="button" class="btn btn-outline-primary fs-4" data-content="benefits">Benefits</button>
+        <button type="button" class="btn btn-outline-primary fs-4" data-content="how-use">How to Use</button>
+        <button type="button" class="btn btn-outline-primary fs-4" data-content="nutrition">Nutrition Table</button>
+    </div>
+
+    <!-- Content Sections -->
+    <div id="description" class="content-section active lh-lg">
+        <p class="px-5 py-2">{{ product.description }}</p>
+    </div>
+    <div id="benefits" class="content-section lh-lg">
+        <p class="px-5 py-2">{{ product.benefits }}</p>
+    </div>
+    <div id="how-use" class="content-section lh-lg">
+        <p class="px-5 py-2">{{ product.how_to_use }}</p>
+    </div>
+    <div id="nutrition" class="content-section">
+        <img src="{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/nutrition.png') }}" class="main-image py-3" alt="Nutrition Table">
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="mt-5">
+        <h3 class="pb-2 border-bottom">Reviews</h3>
+        <div id="reviews" class="">
+            {% for review in reviews: %}
+            <div class="review-card">
+                <h5>{{ review['fname'] }} {{ review['lname'] }}</h5>
+                <div class="rating">
+                    {% set rating = review['rating'] | round(1) %}
+                    {% set full_stars = rating | int %}
+                    {% set empty_stars = 5 - full_stars %}
+
+                    <!-- Render full stars -->
+                    {% for _ in range(full_stars) %}
+                        <span>★</span>
+                    {% endfor %}
+
+                    <!-- Render empty stars -->
+                    {% for _ in range(empty_stars) %}
+                        <span>☆</span>
+                    {% endfor %}
+                    <p>({{ review['rating'] | round(1) }}/5)</p>
+                </div>
+                <p class="comment">{{ review['review'] }}</p>
+
+                {% if current_user and (current_user.id == review.user_id) %}
+                <button class="btn btn-sm btn-primary edit-review mt-2" data-review-id="{{ review.id }}">Edit</button>
+                <button class="btn btn-sm btn-danger delete-review mt-2" data-review-id="{{ review.id }}">Delete</button>
+
+                <form id="edit-review-form-{{ review.id }}" class="d-none mt-3" method="POST" action="{{ url_for('edit_review', product_id=product.id) }}">
+                    <input name="user_id" value="{{ current_user.id }}" hidden>
+                    <input name="review_id" value="{{ review.id }}" hidden>
+                    <div class="form-group mt-2 mb-2" style="width: 30%;">
+                        <label class="fw-bold mb-2">Rating:</label>
+                        <select name="rating" class="form-control">
+                            {% for i in range(0, 51) %}
+                            <option value="{{ i / 10 }}">{{ i / 10 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="fw-bold mb-2">Your review:</label>
+                        <textarea name="review" class="form-control" rows="5" placeholder="Write your review..." style="width: 80%;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Submit</button>
+                    <button type="button" class="btn btn-secondary mt-2 close-edit-review-form" data-review-id="{{ review.id }}">Cancel</button>
+                </form>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- Add Review Form -->
+        {% if current_user and (current_user.id not in users_review): %}
+        <button id="add-review-button" class="btn btn-primary mt-3">Write a Review</button>
+
+         <form id="review-form" class="d-none mt-3" method="POST" action="{{ url_for('add_review', product_id=product.id) }}">
+             <input name="user_id" value="{{ current_user.id }}" hidden>
+             <h3 class="mb-3">Write your review</h3>
+             <div class="form-group mt-2 mb-2" style="width: 30%;">
+                <label class="fw-bold mb-2">Rating:</label>
+                <select name="rating" class="form-control">
+                    {% for i in range(0, 51) %}
+                    <option value="{{ i / 10 }}">{{ i / 10 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+             <div class="form-group">
+                 <label class="fw-bold mb-2">Your review:</label>
+                <textarea name="review" class="form-control" rows="5" placeholder="Write your review..." style="width: 80%;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-2">Submit</button>
+             <button type="button" id="close-review-form" class="btn btn-secondary mt-2 mw-2">Cancel</button>
+
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="mt-5">
+        <h3 class="pb-2 border-bottom">Related Products</h3>
+        <div class="related-products">
+            {% for product in related_products: %}
+            <div class="card">
+                <a href="{{ url_for('product', id=product['id']) }}" class="card-link">
+                    <div class="card card-img-top-custom">
+                        <span class="discount-tag">-{{ product['discount'] }}%</span>
+                        <img src="{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/head.png') }}" class="card-img-top" alt="Product Image">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ product['name'] }}</h4>
+                            <p class="card-text">
+                                <span class="text-muted text-decoration-line-through">From: ${{ product['base_value'] | round(2) }}</span><br>
+                                <span class="fw-bold">To: ${{ product['current_value'] | round(2) }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block page_script %}
+<script>
+$(document).ready(function() {
+    let selectedFlavor = '';
+
+    // Handle flavor selection
+    $('.btn-flavor').each(function() {
+        $(this).on('click', function() {
+            $('.btn-flavor').removeClass('active');
+            $(this).addClass('active');
+            selectedFlavor = $(this).text();
+        });
+    });
+
+    // Handle Add to Cart button click
+    $('#add-to-cart-form').on('submit', function(event) {
+        event.preventDefault();
+        let productId = {{ product['id'] | tojson }};
+        let productName = "{{ product['name'] }}";
+        let productPrice = {{ product['current_value'] }};
+        let basePrice = {{ product['base_value'] }};
+        let weight = {{ product['weight'] }};
+        let brand = "{{ product['brand'] }}";
+        let quantity = $('#quantity').val();
+
+        if (!selectedFlavor) {
+            alert('Please select a flavor');
+            return;
+        }
+
+        addToCart(productId, productName, selectedFlavor, productPrice, basePrice, weight, brand, quantity);
+    });
+
+    // Carousel change image
+    window.changeImage = function(imageSrc) {
+        // Update main image source
+        $('#mainImage').attr('src', imageSrc);
+
+        // Update thumbnail active state
+        $('.thumbnail').removeClass('active');
+        $('.thumbnail').filter(function() {
+            return $(this).attr('src').includes(imageSrc);
+        }).addClass('active');
+    };
+
+    // Description switching buttons
+    $('.content-buttons .btn').each(function() {
+        $(this).on('click', function() {
+            // Remove active class from all buttons
+            $('.content-buttons .btn').removeClass('active');
+            $(this).addClass('active');
+
+            // Hide all content sections
+            $('.content-section').removeClass('active');
+            // Show the corresponding content section
+            $('#' + $(this).data('content')).addClass('active');
+        });
+    });
+});
+
+// Toggle review form visibility
+    $('#add-review-button').on('click', function() {
+        $('#review-form').toggleClass('d-none');
+        $(this).toggleClass('d-none');
+    });
+
+    // Close review form
+    $('#close-review-form').on('click', function() {
+        $('#review-form').addClass('d-none');
+        $('#add-review-button').removeClass('d-none');
+    });
+
+    // Toggle edit review form visibility
+    $('.edit-review').on('click', function() {
+        const reviewId = $(this).data('review-id');
+        const reviewText = $(this).siblings('.comment').text();
+        const reviewRating = $(this).siblings('.rating').find('p').text().replace(/[()\/5]/g, '');
+
+        $(`#edit-review-form-${reviewId}`).find('textarea[name="review"]').val(reviewText);
+        $(`#edit-review-form-${reviewId}`).find('select[name="rating"]').val(reviewRating);
+        $(`#edit-review-form-${reviewId}`).removeClass('d-none');
+        $(this).hide();
+        $(this).siblings('.delete-review').hide();
+    });
+
+    // Close edit review form
+    $('.close-edit-review-form').on('click', function() {
+        const reviewId = $(this).data('review-id');
+        $(`#edit-review-form-${reviewId}`).addClass('d-none');
+        $(`.edit-review[data-review-id="${reviewId}"]`).show();
+        $(`.delete-review[data-review-id="${reviewId}"]`).show();
+    });
+
+    // Handle delete review
+    $('.delete-review').on('click', function() {
+        const reviewId = $(this).data('review-id');
+        if (confirm('Are you sure you want to delete this review?')) {
+            $.ajax({
+                url: `/delete_review/${reviewId}`,
+                type: 'DELETE',
+                success: function(result) {
+                    location.reload();
+                }
+            });
+        }
+    });
+
+</script>
+{% endblock %}
+
+

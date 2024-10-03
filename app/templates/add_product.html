@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="container mt-5 text-center">
+    <h1>{% if product %}Edit Product{% else %}Add a New Product{% endif %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('update_existent_product',product_id=product.id) if exist else url_for('preview_product') }}">
+            <div class="form-group mb-3">
+                <label for="product_name">Product Name</label>
+                <input type="text" class="form-control" id="product_name" name="product_name" value="{{ product.product_name if product else '' }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="category">Category</label>
+                <select class="form-control" id="category" name="category" required>
+                    <option value="" disabled>Select Category</option>
+                    <option value="Whey" {% if product and product.category == 'Whey' %}selected{% endif %}>Whey</option>
+                    <option value="Creatine" {% if product and product.category == 'Creatine' %}selected{% endif %}>Creatine</option>
+                    <option value="Pre-Workout" {% if product and product.category == 'Pre-Workout' %}selected{% endif %}>Pre-Workout</option>
+                    <option value="Hyper Caloric" {% if product and product.category == 'Hyper Caloric' %}selected{% endif %}>Hyper Caloric</option>
+                    <option value="Caffeine" {% if product and product.category == 'Caffeine' %}selected{% endif %}>Caffeine</option>
+                    <option value="Vitamins" {% if product and product.category == 'Vitamins' %}selected{% endif %}>Vitamins</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="brand">Brand</label>
+                <select class="form-control" id="brand" name="brand" required>
+                    <option value="" disabled>Select Brand</option>
+                    {% for i in range(1, 10) %}
+                        <option value="Brand{{ i }}" {% if product and product.brand == 'Brand' ~ i %}selected{% endif %}>Brand{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="base_price">Base Price</label>
+                <input type="number" step="0.01" class="form-control" id="base_price" name="base_price" value="{{ product.base_value if product else '' }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="discount">Discount (%)</label>
+                <select class="form-control" id="discount" name="discount">
+                    {% for i in range(0, 101) %}
+                        <option value="{{ i }}" {% if product and product.discount == i %}selected{% endif %}>{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="selling_price">Selling Price</label>
+                <input type="number" step="0.01" class="form-control" id="selling_price" name="selling_price" value="{{ product.current_value if product else '' }}" readonly>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="flavours">Flavours Available (Hold Ctrl+click to multiple selection)</label>
+                <select class="form-control" id="flavours" name="flavours" multiple required>
+                    {% set selected_flavours = product.flavours if product else [] %}
+                    <option value="Chocolate" {% if 'Chocolate' in selected_flavours %}selected{% endif %}>Chocolate</option>
+                    <option value="Strawberry" {% if 'Strawberry' in selected_flavours %}selected{% endif %}>Strawberry</option>
+                    <option value="Vanilla" {% if 'Vanilla' in selected_flavours %}selected{% endif %}>Vanilla</option>
+                    <option value="Coffee" {% if 'Coffee' in selected_flavours %}selected{% endif %}>Coffee</option>
+                    <option value="Lemon" {% if 'Lemon' in selected_flavours %}selected{% endif %}>Lemon</option>
+                    <option value="Cookie" {% if 'Cookie' in selected_flavours %}selected{% endif %}>Cookie</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="weight">Weight (g)</label>
+                <input type="number" class="form-control" id="weight" name="weight" value="{{ product.weight if product else '' }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="cover_image">Cover Image</label>
+                <input type="file" class="form-control" id="cover_image" name="cover_image">
+                {% if product and product.images.cover_image %}
+                    <div class="mt-2">
+                        <img src="{{ url_for('static', filename='images/temp/' ~ product.images.cover_image) }}" style="max-width: 100px;" alt="Current Cover Image">
+                        <input type="hidden" name="existing_cover_image" value="{{ product.images.cover_image }}">
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="nutrition_table_image">Nutrition Table Image</label>
+                <input type="file" class="form-control" id="nutrition_table_image" name="nutrition_table_image">
+                {% if product and product.images.nutrition_table_image %}
+                    <div class="mt-2">
+                        <img src="{{ url_for('static', filename='images/temp/' ~ product.images.nutrition_table_image) }}" style="max-width: 100px;" alt="Current Nutrition Table Image">
+                        <input type="hidden" name="existing_nutrition_table_image" value="{{ product.images.nutrition_table_image }}">
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="more_images">More Images (optional)</label>
+                <input type="file" class="form-control" id="more_images" name="more_images" multiple>
+                {% if product and product.images.more_images %}
+                    <div class="mt-2">
+                        {% for image in product.images.more_images %}
+                            <img src="{{ url_for('static', filename='images/temp/' ~ image) }}" style="max-width: 100px;" alt="Current Image">
+                            <input type="hidden" name="existing_more_images" value="{{ image }}">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Write a brief description of the product..." required>{{ product.description if product else '' }}</textarea>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="benefits">Benefits</label>
+                <textarea class="form-control" id="benefits" name="benefits" rows="4" placeholder="List the benefits of the product..." required>{{ product.benefits if product else '' }}</textarea>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="how_to_use">How to Use</label>
+                <textarea class="form-control" id="how_to_use" name="how_to_use" rows="4" placeholder="Provide instructions on how to use the product..." required>{{ product.how_to_use if product else '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">{% if product %}Save Changes{% else %}Preview Page{% endif %}</button>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript to dynamically update the selling price -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const basePriceInput = document.getElementById('base_price');
+        const discountInput = document.getElementById('discount');
+        const sellingPriceInput = document.getElementById('selling_price');
+
+        function updateSellingPrice() {
+            const basePrice = parseFloat(basePriceInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            const sellingPrice = basePrice * (1 - (discount / 100));
+            sellingPriceInput.value = sellingPrice.toFixed(2);
+        }
+
+        basePriceInput.addEventListener('input', updateSellingPrice);
+        discountInput.addEventListener('change', updateSellingPrice);
+    });
+</script>
+{% endblock %}

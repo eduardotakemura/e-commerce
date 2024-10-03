@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container px-4 py-3 mt-5">
+    <!-- Header (Search by, Order by, Pagination Control) -->
+    <div class="row mb-3">
+        <!-- Search by -->
+        <div class="col-2">
+            <strong>Searching by:</strong> {{ filters['query_param'] }}
+        </div>
+
+        <div class="col-10 d-flex justify-content-between align-items-center">
+
+            <!-- Order by -->
+            <div>
+                Order by:
+                    <div class="btn-group">
+                        <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ order_by if order_by else 'Most Relevant' }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item order-button-selectors" href="#" data-order-by="Most Sold">Most Sold</a></li>
+                            <li><a class="dropdown-item order-button-selectors" href="#" data-order-by="Higher Price">Higher Price</a></li>
+                            <li><a class="dropdown-item order-button-selectors" href="#" data-order-by="Lower Price">Lower Price</a></li>
+                            <li><a class="dropdown-item order-button-selectors" href="#" data-order-by="Discount">Discount</a></li>
+                            <li><a class="dropdown-item order-button-selectors" href="#" data-order-by="Most Relevant">Most Relevant</a></li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pagination Control -->
+            <div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <!-- Previous Control -->
+                        {% if pagination['object'].has_prev %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('search', page=pagination['object'].prev_num, query=filters['query_param']) }}">Previous</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        {% endif %}
+
+                        <!-- Pages Control -->
+                        {% for page_num in range(1, pagination['object'].pages + 1) %}
+                        <li class="page-item {% if page_num == pagination['object'].page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('search', page=page_num, query=filters['query_param']) }}">{{ page_num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        <!-- Next Control -->
+                        {% if pagination['object'].has_next %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('search', page=pagination['object'].next_num, query=filters['query_param']) }}">Next</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Body (Filters and Products) -->
+    <div class="row">
+        <!-- Filter Column (Left) -->
+        <div class="col-2">
+            <form id="filterForm" method="get" action="{{ url_for('search') }}">
+                <input name="query" value="{{ filters['query_param'] }}" hidden>
+                <input type="hidden" id="orderByInput" name="order_by" value="{{ order_by if order_by else 'Most Relevant' }}">
+
+                <h5>Filter by</h5>
+                <!-- Clear Filters Button -->
+                <button type="button" class="btn btn-secondary w-100 mb-3" id="clearFiltersButton">Clear Filters</button>
+
+                <!-- Applied Filters Tags -->
+                <div id="appliedFilters" class="mb-3">
+                    <!-- Tags will be inserted here dynamically -->
+                </div>
+
+                <!-- Brand Filter -->
+                <div class="filter-section">
+                    <button class="btn btn-dark w-100 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#brandFilter" aria-expanded="false" aria-controls="brandFilter">
+                        Brand <span class="float-end">&#x25BC;</span>
+                    </button>
+                    <div class="collapse mb-4" id="brandFilter">
+                        {% for brand in filters_limits['brands']: %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="brand" value="{{ brand }}" id="{{ brand }}" {% if brand in filters['filter_brands'] %} checked {% endif %}>
+                            <label class="form-check-label" for="{{ brand }}">
+                                {{ brand }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-section">
+                    <button class="btn btn-dark w-100 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#categoryFilter" aria-expanded="false" aria-controls="categoryFilter">
+                        Category <span class="float-end">&#x25BC;</span>
+                    </button>
+                    <div class="collapse mb-4" id="categoryFilter">
+                        {% for category in filters_limits['categories']: %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="category" value="{{ category }}" id="{{ category }}" {% if category in filters['filter_categories'] %} checked {% endif %}>
+                            <label class="form-check-label" for="{{ category }}">
+                                {{ category }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Flavor Filter -->
+                <div class="filter-section">
+                    <button class="btn btn-dark w-100 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#flavorFilter" aria-expanded="false" aria-controls="flavorFilter">
+                        Flavor <span class="float-end">&#x25BC;</span>
+                    </button>
+                    <div class="collapse mb-4" id="flavorFilter">
+                        {% for flavour in filters_limits['flavours']: %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="flavour" value="{{ flavour }}" id="{{ flavour }}" {% if flavour in filters['filter_flavours'] %} checked {% endif %}>
+                            <label class="form-check-label" for="{{ flavour }}">
+                                {{ flavour }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                 <!-- Weight Filter -->
+                <div class="filter-section">
+                    <button class="btn btn-dark w-100 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#weightFilter" aria-expanded="false" aria-controls="weightFilter">
+                        Weight <span class="float-end">&#x25BC;</span>
+                    </button>
+                    <div class="collapse mb-4" id="weightFilter">
+                        {% for weight in filters_limits['weights'] %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="weight" value="{{ weight }}" id="{{ weight }}" {% if weight in filters['filter_weights'] %} checked {% endif %}>
+                            <label class="form-check-label" for="{{ weight }}">
+                                {{ weight }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Products Column (Right) -->
+        <div class="col-10">
+            <!-- Pages Results -->
+            <div class="mb-3">
+                <p>Showing
+                    {% if pagination['total_items'] > 13: %}
+                        {{ pagination['results'] }} of {{ pagination['total_items'] }} results.
+                    {% else: %}
+                        0-{{ pagination['total_items'] }} of {{ pagination['total_items'] }} results.
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Products -->
+            <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
+
+                {% for product in products %}
+                <!-- Product Card -->
+                <div class="col">
+                    <a href="{{ url_for('product', id=product['id']) }}" class="card-link">
+                        <div class="card card-img-top-custom">
+                            {% if product['discount'] > 0 %}
+                            <span class="discount-tag">-{{ product['discount'] }}%</span>
+                            {% endif %}
+                            <img src="{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/head.png') }}" class="card-img-top" alt="Product Image">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ product['name'] }}</h4>
+                                <p class="card-text">
+                                    <span class="text-muted text-decoration-line-through">From: ${{ product['base_value'] | round(2) }}</span><br>
+                                    <span class="fw-bold">To: ${{ product['current_value'] | round(2) }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_script %}
+<script>
+$(document).ready(function() {
+    const $filterForm = $('#filterForm');
+    const $checkboxes = $filterForm.find('input[type="checkbox"]');
+    const $clearFiltersButton = $('#clearFiltersButton');
+    const $appliedFiltersDiv = $('#appliedFilters');
+    const $orderByInput = $('#orderByInput');
+    const $dropdownMenuButton = $('#dropdownMenuButton');
+    const $orderItems = $('.order-button-selectors');
+
+    const renderAppliedFilters = () => {
+        $appliedFiltersDiv.empty(); // Clear existing tags
+
+        // Add tags for selected checkboxes
+        $checkboxes.each(function() {
+            if (this.checked) {
+                const $tag = $('<span></span>')
+                    .addClass('badge bg-primary me-2 mb-2')
+                    .text(this.value);
+                $appliedFiltersDiv.append($tag);
+            }
+        });
+    };
+
+    $checkboxes.on('change', function() {
+        $filterForm.submit();
+    });
+
+    $clearFiltersButton.on('click', function() {
+        // Clear all filters
+        $checkboxes.prop('checked', false);
+        $orderByInput.val('Most Relevant');
+        $dropdownMenuButton.text('Most Relevant');
+        $filterForm.submit();
+    });
+
+    $orderItems.on('click', function(e) {
+        e.preventDefault();
+        const orderBy = $(this).data('order-by');
+        $orderByInput.val(orderBy);
+        $dropdownMenuButton.text(orderBy);
+        $filterForm.submit();
+    });
+
+    renderAppliedFilters(); // Render tags on page load
+});
+
+</script>
+{% endblock %}

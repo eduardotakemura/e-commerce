@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="container mt-5 text-center">
+    <h1>Welcome to Gains Galaxy!</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container px-4 py-3">
+    <h2 class="pb-2 border-bottom">Recent Offers</h2>
+    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
+
+        {% for product in products: %}
+      <!-- Product Card -->
+      <div class="col">
+         <a href="{{ url_for('product', id=product['id']) }}" class="card-link">
+        <div class="card card-img-top-custom">
+            {% if product['discount'] > 0: %}
+           <span class="discount-tag">-{{ product['discount'] }}%</span>
+            {% endif %}
+          <img src="{{ url_for('static', filename='images/products/' ~ product['id'] ~ '/head.png') }}" class="card-img-top" alt="Product Image">
+          <div class="card-body">
+            <h4 class="card-title">{{ product['name'] }}</h4>
+            <p class="card-text">
+              <span class="text-muted text-decoration-line-through">From: ${{ product['base_value'] | round(2) }}</span><br>
+              <span class="fw-bold">To: ${{ product['current_value'] | round(2) }}</span>
+            </p>
+          </div>
+        </div>
+         </a>
+      </div>
+        {% endfor %}
+
+    </div>
+  </div>
+
+  <!-- Brands Carousel -->
+<div class="container py-5 mt-5">
+      <h2 class="pb-2 border-bottom">Our Brands</h2>
+      <div class="scrolling-wrapper">
+        <div class="scrolling">
+          {% for brand in brands %}
+          <div class="brand">
+            <img src="{{ brand.src }}" alt="{{ brand.alt }}">
+          </div>
+          {% endfor %}
+          {% for carousel_brand in carousel_brands %}
+          <div class="brand">
+            <img src="{{ url_for('static', filename='images/brands/' ~ carousel_brand ~ '.jpg') }}" alt="{{ carousel_brand }} Logo">
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+{% endblock %}

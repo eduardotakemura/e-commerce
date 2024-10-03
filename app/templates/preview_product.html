@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container px-4 py-3 mt-3">
+    <h1 class="text-center">Preview Page</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-center">Confirm and post the new product?</h5>
+            <div class="d-flex justify-content-center">
+                <form action="{{ url_for('confirm_product') }}" method="POST">
+                    <button type="submit" class="btn btn-success me-3">Confirm</button>
+                </form>
+                <form action="{{ url_for('edit_product') }}" method="GET">
+                    <button type="submit" class="btn btn-warning">Back to Edit Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-md-6">
+            <div class="carousel-container d-flex flex-column align-items-center">
+                <!-- Main Image -->
+                <img id="mainImage" src="{{ url_for('static', filename='images/temp/head.png') }}" class="main-image" alt="Main Product Image">
+
+                <!-- Thumbnails -->
+                <div class="d-flex mt-2 justify-content-center">
+                    <!-- Head Image Thumbnail -->
+                    <img src="{{ url_for('static', filename='images/temp/' ~ product.images.cover_image) }}" class="thumbnail" alt="Thumbnail" onclick="changeImage('{{ url_for('static', filename='images/temp/' ~ product.images.cover_image) }}')">
+
+                    <!-- More Images Thumbnails -->
+                    {% for image in product.images.more_images %}
+                        <img src="{{ url_for('static', filename='images/temp/' ~ image) }}" class="thumbnail" alt="Thumbnail" onclick="changeImage('{{ url_for('static', filename='images/temp/' ~ image) }}')">
+                    {% endfor %}
+
+                    <!-- Nutrition Table Thumbnail -->
+                    <img src="{{ url_for('static', filename='images/temp/' ~ product.images.nutrition_table_image) }}" class="thumbnail" alt="Thumbnail" onclick="changeImage('{{ url_for('static', filename='images/temp/' ~ product.images.nutrition_table_image) }}')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h2 class="mb-4">{{ product.product_name }} ({{ product.weight }}g)</h2>
+            <!-- Tags -->
+            <div class="product-tags">
+                {% if product.discount > 0 %}
+                <div class="tag-discount">-{{ product.discount }}% OFF</div>
+                {% endif %}
+                {% if product.top_sale %}
+                <div class="tag-top-sale">Top Sales</div>
+                {% endif %}
+                {% if product.most_sold %}
+                <div class="tag-most-sold">Most Sold</div>
+                {% endif %}
+            </div>
+            <p class="text-muted text-decoration-line-through">From: ${{ product.base_value | round(2) }}</p>
+            <p class="fw-bold fs-4">To: ${{ product.current_value | round(2) }}</p>
+
+            <form class="d-flex flex-column" id="add-to-cart-form">
+                <!-- Flavor Selection Row -->
+                <label class="form-label">Choose flavor:</label>
+                <div class="d-flex mb-3" id="flavor-selection">
+                    {% for flavour in product['flavours']: %}
+                    <button type="button" class="btn btn-outline-primary btn-flavor me-2">{{ flavour }}</button>
+                    {% endfor %}
+                </div>
+
+                <!-- Quantity Input -->
+                <label for="quantity" class="form-label">Quantity</label>
+                <div class="d-flex">
+                    <input type="number" id="quantity" class="form-control me-2" value="1" min="1" style="width: 80px;">
+                    <button type='button' id="add-to-cart-button" class="btn btn-primary" style="width: 120px;">Add to Cart</button>
+                </div>
+            </form>
+
+            <!-- Estimate Shipping -->
+            <div class="estimate-shipping mt-4">
+                <label for="zip-code" class="form-label">Estimate Shipping:</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="zip-code" class="form-control zip-code-input" placeholder="Enter zip code">
+                    <button type="button" class="btn btn-secondary btn-calculate">Calculate</button>
+                    <p class="mt-2 mb-0 text-decoration-underline">Get zip-code</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Content Buttons -->
+    <div class="content-buttons mt-5">
+        <button type="button" class="btn btn-outline-primary active fs-4" data-content="description">Description</button>
+        <button type="button" class="btn btn-outline-primary fs-4" data-content="benefits">Benefits</button>
+        <button type="button" class="btn btn-outline-primary fs-4" data-content="how-use">How to Use</button>
+        <button type="button" class="btn btn-outline-primary fs-4" data-content="nutrition">Nutrition Table</button>
+    </div>
+
+    <!-- Content Sections -->
+    <div id="description" class="content-section active lh-lg">
+        <p class="px-5 py-2">{{ product.description }}</p>
+    </div>
+    <div id="benefits" class="content-section lh-lg">
+        <p class="px-5 py-2">{{ product.benefits }}</p>
+    </div>
+    <div id="how-use" class="content-section lh-lg">
+        <p class="px-5 py-2">{{ product.how_to_use }}</p>
+    </div>
+    <div id="nutrition" class="content-section">
+        <img src="{{ url_for('static', filename='images/temp/nutrition.png') }}" class="main-image py-3" alt="Nutrition Table">
+    </div>
+</div>
+{% endblock %}
+
+{% block page_script %}
+<script>
+// Carousel change image
+window.changeImage = function(imageSrc) {
+    // Update main image source
+    $('#mainImage').attr('src', imageSrc);
+
+    // Update thumbnail active state
+    $('.thumbnail').removeClass('active');
+    $('.thumbnail').filter(function() {
+        return $(this).attr('src').includes(imageSrc);
+    }).addClass('active');
+};
+
+// Description switching buttons
+$('.content-buttons .btn').each(function() {
+    $(this).on('click', function() {
+        // Remove active class from all buttons
+        $('.content-buttons .btn').removeClass('active');
+        $(this).addClass('active');
+
+        // Hide all content sections
+        $('.content-section').removeClass('active');
+        // Show the corresponding content section
+        $('#' + $(this).data('content')).addClass('active');
+    });
+});
+</script>
+{% endblock %}

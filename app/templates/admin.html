@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="container mt-5 text-center">
+    <h1>Admin Area</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-grid gap-1 col-4 mx-auto">
+        <a href="{{ url_for('add_product') }}" type="button" class="btn btn-lg btn-dark btn-block mt-4">Add a New Product</a>
+        <a href="{{ url_for('all_orders') }}" type="button" class="btn btn-lg btn-dark btn-block mt-4">Check Orders</a>
+        <a href="{{ url_for('all_products') }}" type="button" class="btn btn-lg btn-dark btn-block mt-4">Products List</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block page_script %}
+
+{% endblock %}

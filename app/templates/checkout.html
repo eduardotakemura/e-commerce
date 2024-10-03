@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}
+<div class="container mt-3 text-center">
+    <h1>Checkout</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+
+                <!-- Products Section -->
+                <div class="product-container">
+                    <!-- Headers -->
+                    <div class="product-header d-flex justify-content-between fw-bold fs-5 py-2 text-center">
+                        <div class="col-5">Product</div>
+                        <div class="col-2 text-center">Price</div>
+                        <div class="col-2 text-center">Amount</div>
+                        <div class="col-3 text-center">Total</div>
+                    </div>
+
+                    <!-- Products Cards -->
+                    {% for product in cart: %}
+                    <div class="product-row d-flex justify-content-between py-2" data-cart-id="{{ product['cart_id'] }}">
+                        <!-- Product Column -->
+                        <div class="col-5 d-flex align-items-start">
+                            <img src="{{ url_for('static', filename='images/products/' ~ product['product_id'] ~ '/head.png') }}" alt="Product Image" class="product-image img-fluid me-4">
+                            <div class="d-flex flex-column">
+                                <a class="fw-bold fs-5 text-dark" href="/product/{{ product['product_id'] }}">{{ product['product_name'] }}</a>
+                                <div class="fw-light">Brand: {{ product['brand'] }}</div>
+                                <div class="fw-light">Flavour: {{ product['flavour'] }}</div>
+                                <div class="fw-light">Weight: {{ product['weight'] }}g</div>
+                            </div>
+                        </div>
+
+                        <!-- Price Column -->
+                        <div class="col-2 text-center">
+                            <div class="fw-light">From: <del>${{ product['base_price'] | round(2) }}</del></div>
+                            <div><strong>To: $<span class="unit-price-holder">{{ product['product_price'] | round(2) }}</span></strong></div>
+                        </div>
+
+                        <!-- Amount Column -->
+                        <div class="col-2 text-center">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <button class="btn btn-outline-secondary btn-sm btn-quantity" data-action="decrease">-</button>
+                                <div class="mx-2 quantity-holder">{{ product['quantity'] }}</div>
+                                <button class="btn btn-outline-secondary btn-sm btn-quantity" data-action="increase">+</button>
+                            </div>
+                            <button class="btn btn-link text-danger mt-2 remove-item">Remove</button>
+                        </div>
+                        <!-- Total Column -->
+                        <div class="col-3 text-center fs-5">
+                            <strong>$<span class="total-price-holder">{{ (product['product_price'] * product['quantity']) | round (2) }}</span></strong>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- Shipping Section -->
+                <div class="shipping-card card p-3 mt-4">
+                    <h4>Shipping</h4>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control zip-code-input" placeholder="Enter zip-code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" id="calculate-shipping">Calculate</button>
+                        </div>
+                    </div>
+
+                    <div class="shipping-options d-none" id="shipping-options">
+                        <div class="shipping-option p-2 mb-2 border selected d-flex align-items-center">
+                            <input class="me-4" type="radio" name="shipping" value="normal" checked>
+                            <label class="ml-2 mb-0"><strong>Normal</strong> | $5.00<br><span class="text-success">Expected shipment: 5 days</span><br> Maximum: 7 days.</label>
+                        </div>
+                        <div class="shipping-option p-2 mb-2 border d-flex align-items-center">
+                            <input class="me-4" type="radio" name="shipping" value="express">
+                            <label class="ml-2 mb-0"><strong>Express</strong> | $15.00<br><span class="text-success">Expected shipment: 2 days</span><br> Maximum: 3 days</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4 col mt-lg-0 mt-4">
+                <div class="summary-card card p-3 bg-light text-center">
+                    <h4>Order Summary</h4>
+                    <div class="order-summary-table">
+                        <div class="row py-2 border-bottom">
+                            <div class="col-6">Subtotal:</div>
+                            <div class="col-6">$<span class="subtotal-holder">{{ order_value | round(2) }}</span></div>
+                        </div>
+                        <div class="row py-2 border-bottom">
+                            <div class="col-6">Shipping:</div>
+                            <div class="col-6">$<span class="shipping-holder">0.00</span></div>
+                        </div>
+                        <div class="row py-2 total-row">
+                            <div class="col-6">Total:</div>
+                            <div class="col-6">$<span class="total-holder">{{ order_value | round(2) }}</span></div>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <a type="button" href="{{ url_for('home') }}" class="btn btn-outline-primary btn-block">Add More Products</a>
+                        <a type="button" href="{{ url_for('payment') }}" class="btn btn-primary btn-block">To Payment</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block page_script %}
+<script>
+$(document).ready(function() {
+    function bindEvents() {
+        $('.btn-quantity').click(function() {
+            const action = $(this).data('action');
+            const productRow = $(this).closest('.product-row');
+            const cartId = productRow.data('cart-id');
+            let quantityElement = productRow.find('.quantity-holder');
+            let quantity = parseInt(quantityElement.html());
+
+            if (action === 'increase') {
+                quantity += 1;
+            } else if (action === 'decrease' && quantity > 1) {
+                quantity -= 1;
+            }
+
+            quantityElement.html(quantity);
+            updateProductTotal(productRow, cartId, quantity);
+            updateOrderSummary();
+        });
+
+        $('.remove-item').click(function() {
+            const productRow = $(this).closest('.product-row');
+            const cartId = productRow.data('cart-id');
+
+            productRow.remove();
+            removeFromCart(cartId);
+            updateOrderSummary();
+        });
+    }
+
+    function updateProductTotal(productRow, cartId, quantity) {
+        const priceElement = productRow.find('.unit-price-holder');
+        const price = parseFloat(priceElement.html());
+        const totalElement = productRow.find('.total-price-holder');
+        const total = (price * quantity).toFixed(2);
+        totalElement.html(total);
+
+        // Update the session with the new quantity
+        updateCartQuantity(cartId, quantity);
+    }
+
+    function updateOrderSummary() {
+        let subtotal = 0;
+        $('.total-price-holder').each(function() {
+            subtotal += parseFloat($(this).html());
+        });
+
+        let shipping = 0;
+        if ($('input[name="shipping"][value="express"]').is(':checked')) {
+            shipping = 15;
+        } else if ($('input[name="shipping"][value="normal"]').is(':checked')) {
+            shipping = 5;
+        }
+        $('.shipping-holder').html(shipping.toFixed(2));
+
+        const total = (subtotal + shipping).toFixed(2);
+        $('.subtotal-holder').html(subtotal.toFixed(2));
+        $('.total-holder').html(total);
+    }
+
+    $('#calculate-shipping').click(function() {
+        $('#shipping-options').removeClass('d-none');
+        const normalShipping = $('input[name="shipping"][value="normal"]');
+        normalShipping.prop('checked', true);
+        updateOrderSummary();
+    });
+
+    $('.shipping-option input[name="shipping"]').change(function() {
+        updateOrderSummary();
+    });
+
+    bindEvents();
+    updateOrderSummary();
+});
+
+</script>
+{% endblock %}

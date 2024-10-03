@@ -1,0 +1,12 @@
+Flask==3.0.3
+Flask_JWT_Extended==4.6.0
+flask_marshmallow==1.2.1
+Flask_Migrate==4.0.7
+Flask-Session==0.8.0
+flask_sqlalchemy==3.1.1
+lorem==0.1.1
+marshmallow==3.22.0
+Requests==2.32.3
+SQLAlchemy==2.0.31
+Werkzeug==3.0.4
+gunicorn==23.0.0

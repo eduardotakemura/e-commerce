@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gains Galaxy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css')}}"
+    />
+</head>
+<body>
+<!-- Header -->
+<header class="sticky-top bg-light">
+    <!-- First Row -->
+    <div class="px-3 py-2">
+      <div class="container d-flex flex-wrap justify-content-between align-items-center">
+
+        <!-- Logo -->
+        <a href="{{ url_for('home') }}" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none fs-3">
+          Gains Galaxy
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-rocket-takeoff mx-2" viewBox="0 0 16 16">
+            <path d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"/>
+            <path d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"/>
+            <path d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"/>
+          </svg>
+        </a>
+
+        <!-- Search bar (centered) -->
+        <div class="col-sm-8 col-lg-4 col-xxl-6">
+          <form class="d-flex justify-content-center" role="search" method="GET" action="{{ url_for('search') }}">
+            <input name="query" type="search" class="form-control text-center" placeholder="Search for something here!" aria-label="Search">
+              <button class="btn btn-outline-secondary" type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </button>
+          </form>
+        </div>
+
+        <!-- Buttons (right) -->
+        <div class="text-end d-flex align-items-center">
+          <button class="btn position-relative me-4" onclick="toggleCart()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black" class="d-block bi bi-cart4" viewBox="0 0 16 16">
+              <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/>
+            </svg>
+            <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">0</span>
+            Cart
+          </button>
+          {% if not current_user: %}
+            <a type="button" href="{{ url_for('login') }}" class="text-decoration-none text-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="d-block bi bi-door-open-fill" viewBox="0 0 16 16">
+                <path d="M1.5 15a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1H13V2.5A1.5 1.5 0 0 0 11.5 1H11V.5a.5.5 0 0 0-.57-.495l-7 1A.5.5 0 0 0 3 1.5V15zM11 2h.5a.5.5 0 0 1 .5.5V15h-1zm-2.5 8c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1"/>
+              </svg>
+              Sign in
+            </a>
+          {% else: %}
+
+            <a type="button" href="{{ url_for('all_products') }}" class="text-decoration-none text-dark me-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="d-block bi bi-card-checklist" viewBox="0 0 16 16">
+                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+                <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/>
+              </svg>
+              Products
+            </a>
+
+
+            <a type="button" href="{{ url_for('profile') }}" class="text-decoration-none text-dark me-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="d-block bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+              </svg>
+              Profile
+            </a>
+            <a type="button" href="{{ url_for('orders',id=current_user['id']) if current_user['role'] == 'user' else url_for('all_orders')  }}" class="text-decoration-none text-dark me-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="d-block bi bi-truck" viewBox="0 0 16 16">
+                  <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+                </svg>
+              Orders
+            </a>
+            <a type="button" href="{{ url_for('logout') }}" class="text-decoration-none text-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="d-block bi bi-door-closed-fill" viewBox="0 0 16 16">
+                <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+              </svg>
+              Logout
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="px-3 py-2 text-bg-dark border-bottom">
+      <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-start justify-content-lg-start">
+          <div class="dropdown">
+            <button class="btn btn-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+              </svg>
+              Categories
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('search',query_category='Whey') }}">Whey</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('search',query_category='Creatine') }}">Creatine</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('search',query_category='Pre-Workout') }}">Pre-Workout</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('search',query_category='Hyper Caloric') }}">Hyper Caloric</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('search',query_category='Caffeine') }}">Caffeine</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('search',query_category='Vitamins') }}">Vitamins</a></li>
+            </ul>
+          </div>
+
+          <ul class="nav col-auto my-2 justify-content-center my-md-0 text-small">
+            <li>
+              <li><a href="{{ url_for('search',query_category='Whey') }}" class="nav-link text-white">Proteins</a></li>
+              <a href="{{ url_for('search',query_category='Hot') }}" class="nav-link text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="orange" class="bi bi-fire" viewBox="0 0 16 16">
+                  <path d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16m0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15"/>
+                </svg>
+                Trending
+              </a>
+            </li>
+            <li><a href="{{ url_for('search',query_category='Sales') }}" class="nav-link text-white">Sales</a></li>
+            <li><a href="{{ url_for('search',query_category='Top') }}" class="nav-link text-white">Top Sold</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<!-- Cart Side Bar -->
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h4>Shopping Cart</h4>
+        <button class="btn btn-sm btn-light" onclick="toggleCart()">Close</button>
+    </div>
+    <div class="cart-body" id="cartItemsContainer">
+        <!-- Cart items will be dynamically added here -->
+    </div>
+    <div class="cart-footer mb-2">
+        <p class="mb-3 fs-4 text-center fw-bold" id="cartTotal">Subtotal: $0</p>
+        <a href="{{ url_for('checkout') }}" type="button" class="btn btn-success btn-lg w-100">To Checkout</a>
+    </div>
+</div>
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+  {% block title %} {% endblock %}
+
+  {% block content %} {% endblock %}
+
+  <!-- Footer -->
+<div class="container">
+  <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 border-top mt-5">
+    <div class="col mb-3">
+      <a href="#" class="align-items-center mb-2 mb-lg-0 text-body-secondary text-dark text-decoration-none">
+          Gains Galaxy
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-rocket-takeoff mx-2" viewBox="0 0 16 16">
+            <path d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"/>
+            <path d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"/>
+            <path d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"/>
+          </svg>
+        </a>
+      <p class="text-body-secondary">© <span id="year"></span></p>
+    </div>
+
+    <div class="col mb-3">
+
+    </div>
+
+    <div class="col mb-3">
+      <h5>Section</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+      </ul>
+    </div>
+
+    <div class="col mb-3">
+      <h5>Section</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+      </ul>
+    </div>
+
+    <div class="col mb-3">
+      <h5>Section</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+      </ul>
+    </div>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% block page_script %} {% endblock %}
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Cart Ajax requests
+function addToCart(productId, productName, selectedFlavor, productPrice, basePrice, weight, brand, quantity) {
+    let item = {
+        cart_id: new Date().getTime(),
+        product_id: productId,
+        product_name: productName,
+        flavour: selectedFlavor,
+        product_price: productPrice,
+        base_price: basePrice,
+        weight: weight,
+        brand: brand,
+        quantity: parseInt(quantity)
+    };
+
+    $.ajax({
+        url: "/add_to_cart",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(item),
+        success: function(response) {
+            console.log("Item added to cart:", response);
+            updateCartSidebar(response);
+            updateCartCount(response.length);
+            toggleCart();
+        },
+        error: function(error) {
+            console.error("Error adding item to cart:", error);
+        }
+    });
+}
+
+function removeFromCart(cartId) {
+    $.ajax({
+        url: "/remove_from_cart",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ cart_id: cartId }),
+        success: function(response) {
+            console.log("Item removed from cart:", response);
+            updateCartSidebar(response);
+            updateCartCount(response.length);
+        },
+        error: function(error) {
+            console.error("Error removing item from cart:", error);
+        }
+    });
+}
+
+function updateCartQuantity(cartId, newQuantity) {
+    $.ajax({
+        url: "/update_cart_quantity",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ cart_id: cartId, quantity: newQuantity }),
+        success: function(response) {
+            console.log("Cart quantity updated:", response);
+            updateCartSidebar(response);
+        },
+        error: function(error) {
+            console.error("Error updating cart quantity:", error);
+        }
+    });
+}
+function toggleCart() {
+    var sidebar = document.getElementById('cartSidebar');
+    var overlay = document.getElementById('cartOverlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+function updateCartSidebar(cartItems) {
+    var cartItemsContainer = document.getElementById('cartItemsContainer');
+    var cartTotal = 0;
+    cartItemsContainer.innerHTML = '';
+
+    cartItems.forEach(function(item) {
+        cartTotal += parseFloat((item.product_price * item.quantity).toFixed(2));
+        itemTotal = parseFloat((item.product_price * item.quantity).toFixed(2));
+        const imgUrl = "{{ url_for('static', filename='images/products/') }}" + item.product_id + "/head.png";
+        const pageUrl = "/product/" + item.product_id;
+
+        let quantityOptions = '';
+        for (let i = 1; i <= 10; i++) {
+            quantityOptions += `<option value="${i}" ${i === item.quantity ? 'selected' : ''}>${i}</option>`;
+        }
+
+        cartItemsContainer.innerHTML += `
+            <div class="cart-item d-flex align-items-center">
+                <img class="cart-image" src="${imgUrl}" alt="Product Image">
+                <div class="item-details">
+                    <a href="${pageUrl}" class="fs-5 text-dark fw-bold">${item.product_name}</a>
+                    <p class="mb-1">Flavour: ${item.flavour}</p>
+                    <p class="mb-1">
+                        Quantity:
+                        <select class="quantity-selector" data-cart-id="${item.cart_id}">
+                            ${quantityOptions}
+                        </select>
+                    </p>
+                    <p class="mb-1">Unit Price: $${parseFloat(item.product_price.toFixed(2))}</p>
+                    <h6 class="mb-0">Item Total: $${itemTotal}</h6>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="red" class="bi bi-trash3-fill remove-icon" viewBox="0 0 16 16" onclick="removeFromCart(${item.cart_id})">
+                  <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                </svg>
+            </div>
+        `;
+    });
+
+    document.getElementById('cartTotal').textContent = `Total: $${cartTotal.toFixed(2)}`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('cartItemsContainer').addEventListener('change', function(event) {
+        if (event.target.classList.contains('quantity-selector')) {
+            const newQuantity = parseInt(event.target.value);
+            const cartId = parseInt(event.target.getAttribute('data-cart-id'));
+
+            updateCartQuantity(cartId, newQuantity);
+        }
+    });
+
+    loadCartSession();
+});
+
+function loadCartSession() {
+    $.ajax({
+        url: "/view_cart",
+        type: "GET",
+        success: function(response) {
+            console.log("Loaded cart from session:", response.cart);
+            updateCartSidebar(response.cart);
+            updateCartCount(response.cart.length);
+        },
+        error: function(error) {
+            console.error("Error loading cart from session:", error);
+        }
+    });
+}
+
+function updateCartCount(count) {
+    var cartCountElement = document.getElementById('cartCount');
+    if (count > 0) {
+        cartCountElement.textContent = count;
+        cartCountElement.style.display = 'block';
+    } else {
+        cartCountElement.style.display = 'none';
+    }
+}
+</script>
+
+</body>
+</html>
